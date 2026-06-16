@@ -31,6 +31,14 @@
     ytd-topbar-logo-renderer #logo-icon {
       display: none !important;
     }
+
+    /* Стили для кода страны (KZ) */
+    ytd-topbar-logo-renderer .country-code,
+    ytd-logo .country-code,
+    #country-code {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   `;
     (document.head || document.documentElement).appendChild(globalStyle);
     console.log("[Userscript] Глобальный шрифт и стили скрытия внедрены.");
@@ -80,10 +88,12 @@
         margin-left: 8px !important;
       }
 
-      /* Скрываем стандартные элементы (код страны и другие плашки) */
-      #country-code,
-      ytd-badge-supported-renderer {
-        display: none !important;
+      /* Стили для кода страны (KZ) и плашек внутри shadowRoot */
+      ytd-topbar-logo-renderer .country-code,
+      ytd-logo .country-code,
+      #country-code {
+        margin: 0 !important;
+        padding: 0 !important;
       }
     `;
       host.shadowRoot.appendChild(shadowStyle);
