@@ -81,15 +81,16 @@
       font-family: 'Japan Daisuke';
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
-    ${STYLES_CONTENT}
   `;
     (document.head || document.documentElement).appendChild(globalStyle);
-    console.log("[Userscript] Глобальные стили логотипа внедрены в head.");
+    console.log("[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.");
   }
   function replaceLogo() {
     const hosts = document.querySelectorAll("ytd-topbar-logo-renderer, ytd-logo");
     hosts.forEach((host) => {
       if (!host || !host.shadowRoot) return;
+      const hasOriginalIcon = host.shadowRoot.querySelector("#logo-icon");
+      if (!hasOriginalIcon) return;
       if (!host.shadowRoot.getElementById("custom-premium-styles")) {
         const shadowStyle = document.createElement("style");
         shadowStyle.id = "custom-premium-styles";

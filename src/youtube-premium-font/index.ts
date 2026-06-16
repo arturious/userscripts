@@ -63,7 +63,7 @@ const STYLES_CONTENT = `
   }
 `;
 
-// 1. Внедряем глобальный шрифт и стили в head документа
+// 1. Внедряем глобальный шрифт в head документа (без визуальных стилей, чтобы избежать утечки в Light DOM)
 if (!document.getElementById('yt-premium-font-global')) {
   const globalStyle = document.createElement('style');
   globalStyle.id = 'yt-premium-font-global';
@@ -72,10 +72,9 @@ if (!document.getElementById('yt-premium-font-global')) {
       font-family: 'Japan Daisuke';
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
-    ${STYLES_CONTENT}
   `;
   (document.head || document.documentElement).appendChild(globalStyle);
-  console.log('[Userscript] Глобальные стили логотипа внедрены в head.');
+  console.log('[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.');
 }
 
 function replaceLogo() {
@@ -83,7 +82,12 @@ function replaceLogo() {
   hosts.forEach(host => {
     if (!host || !host.shadowRoot) return;
 
-    // Внедряем стили непосредственно внутрь shadow root хоста логотипа
+    // Проверяем, содержит ли shadowRoot этого хоста оригинальный логотип.
+    // Если не содержит (например, это внешний контейнер ytd-topbar-logo-renderer,
+    // внутри которого лежит ytd-logo), то не стилизуем его, чтобы избежать дублирования.
+    const hasOriginalIcon = host.shadowRoot.querySelector('#logo-icon');
+    if (!hasOriginalIcon) return;
+
     if (!host.shadowRoot.getElementById('custom-premium-styles')) {
       const shadowStyle = document.createElement('style');
       shadowStyle.id = 'custom-premium-styles';
