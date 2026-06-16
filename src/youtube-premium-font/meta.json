@@ -1,0 +1,14 @@
+{
+  "name": "YouTube Premium Custom Font",
+  "namespace": "my-userscripts",
+  "version": "1.0.0",
+  "description": "Replaces YouTube Premium logo text with custom styled text using Japan Daisuke font",
+  "author": "Artur Bakhtygereyev",
+  "match": [
+    "https://www.youtube.com/*"
+  ],
+  "run-at": "document-end",
+  "grant": [
+    "none"
+  ]
+}
