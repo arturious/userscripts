@@ -7,6 +7,7 @@
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
 // @grant        GM_addStyle
+// @inject-into  content
 // @run-at       document-start
 // ==/UserScript==
 
