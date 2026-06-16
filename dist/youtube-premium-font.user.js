@@ -16,19 +16,22 @@
 
   const STYLE_CONTENT = `
   :root, html, body, ytd-app {
-    --yt-font-family: Verdana, Geneva, sans-serif !important;
-    --ytd-font-family: Verdana, Geneva, sans-serif !important;
-    --yt-spec-general-font: Verdana, Geneva, sans-serif !important;
-    --yt-spec-general-font-family: Verdana, Geneva, sans-serif !important;
-    font-family: Verdana, Geneva, sans-serif !important;
+    --yt-font-family: 'JetBrains Mono', monospace !important;
+    --ytd-font-family: 'JetBrains Mono', monospace !important;
+    --yt-spec-general-font: 'JetBrains Mono', monospace !important;
+    --yt-spec-general-font-family: 'JetBrains Mono', monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
   }
   * {
-    font-family: Verdana, Geneva, sans-serif !important;
+    font-family: 'JetBrains Mono', monospace !important;
   }
 `;
   const globalStyle = document.createElement("style");
-  globalStyle.id = "yt-font-verdana-global";
-  globalStyle.textContent = STYLE_CONTENT;
+  globalStyle.id = "yt-font-jetbrains-global";
+  globalStyle.textContent = `
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+  ${STYLE_CONTENT}
+`;
   (document.head || document.documentElement).appendChild(globalStyle);
   function injectShadowStyle(root) {
     root.querySelectorAll("*").forEach((el) => {
@@ -48,6 +51,6 @@
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
   injectShadowStyle(document);
-  console.log("[Userscript] Весь шрифт на YouTube успешно изменен на Verdana.");
+  console.log("[Userscript] Весь шрифт на YouTube успешно изменен на JetBrains Mono.");
 
 })();
