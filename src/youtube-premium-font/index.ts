@@ -1,4 +1,4 @@
-const CUSTOM_FONT = "'Japan Daisuke', 'Japan Daisuke Font', sans-serif";
+const FONT_FAMILY = '"Japan Daisuke", "JapanDaisuki", "Japan Daisuke Regular", serif !important';
 
 // 1. Внедряем глобальный шрифт в head документа
 if (!document.getElementById('yt-premium-font-global')) {
@@ -7,7 +7,7 @@ if (!document.getElementById('yt-premium-font-global')) {
   globalStyle.textContent = `
     @font-face {
       font-family: 'Japan Daisuke';
-      src: local('Japan Daisuke'), local('Japan Daisuke Font');
+      src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
   `;
   document.head.appendChild(globalStyle);
@@ -38,7 +38,7 @@ function replaceLogo() {
     svg = iconShape.shadowRoot.querySelector('svg');
   }
 
-  // 5. Внедряем принудительное CSS-скрытие путей youtube-paths во внутренние shadowRoot иконок
+  // Принудительное CSS-скрытие путей youtube-paths во внутренних shadowRoot иконок
   if (ytIcon && ytIcon.shadowRoot) {
     if (!ytIcon.shadowRoot.getElementById('force-hide-youtube-paths')) {
       const forceStyle = document.createElement('style');
@@ -90,7 +90,7 @@ function replaceLogo() {
     }
   }
 
-  // 3. Внедряем стили непосредственно внутрь shadow root компонента ytd-topbar-logo-renderer
+  // 3. Внедряем стили (включая псевдоэлемент ::after) непосредственно внутрь shadow root ytd-topbar-logo-renderer
   if (!host.shadowRoot.getElementById('custom-premium-styles')) {
     const shadowStyle = document.createElement('style');
     shadowStyle.id = 'custom-premium-styles';
@@ -100,15 +100,14 @@ function replaceLogo() {
         align-items: center !important;
       }
 
-      .custom-premium-text {
-        font-family: ${CUSTOM_FONT};
-        font-size: 15px;
-        font-weight: 500;
-        margin-left: 8px;
-        color: var(--yt-spec-text-primary, #ffffff);
-        letter-spacing: 0.5px;
-        line-height: 1;
-        display: inline-block;
+      #logo::after {
+        content: "premium" !important;
+        color: var(--yt-spec-text-primary, #ffffff) !important;
+        font-family: ${FONT_FAMILY};
+        font-size: 25px !important;
+        font-weight: 400 !important;
+        line-height: 1 !important;
+        margin-left: 8px !important;
       }
 
       /* Скрываем стандартные элементы (код страны и другие плашки) */
@@ -118,14 +117,6 @@ function replaceLogo() {
       }
     `;
     host.shadowRoot.appendChild(shadowStyle);
-  }
-
-  // 4. Добавляем слово Premium рядом с иконкой
-  if (!logoLink.querySelector('.custom-premium-text')) {
-    const span = document.createElement('span');
-    span.className = 'custom-premium-text';
-    span.textContent = 'Premium';
-    logoLink.appendChild(span);
   }
 }
 
