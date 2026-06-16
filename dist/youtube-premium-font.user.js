@@ -29,7 +29,20 @@
     if (!host || !host.shadowRoot) return;
     const logoLink = host.shadowRoot.querySelector("a#logo");
     if (!logoLink) return;
-    const svg = logoLink.querySelector("svg");
+    let svg = null;
+    svg = logoLink.querySelector("svg");
+    if (!svg) {
+      const ytIcon = logoLink.querySelector("yt-icon") || logoLink.querySelector("#logo-icon");
+      if (ytIcon && ytIcon.shadowRoot) {
+        svg = ytIcon.shadowRoot.querySelector("svg");
+      }
+    }
+    if (!svg) {
+      const iconShape = logoLink.querySelector("yt-icon-shape");
+      if (iconShape && iconShape.shadowRoot) {
+        svg = iconShape.shadowRoot.querySelector("svg");
+      }
+    }
     if (!svg) return;
     const originalViewBox = svg.getAttribute("viewBox");
     if (originalViewBox && !svg.dataset.cropped) {
@@ -40,6 +53,10 @@
       svg.style.width = `${width}px`;
       svg.style.height = `${height}px`;
       svg.dataset.cropped = "true";
+      const parentIcon = svg.closest("yt-icon") || svg.closest("#logo-icon") || svg.parentElement;
+      if (parentIcon) {
+        parentIcon.style.width = `${width}px`;
+      }
     }
     if (!host.shadowRoot.getElementById("custom-premium-styles")) {
       const shadowStyle = document.createElement("style");
@@ -83,6 +100,10 @@
     const target = document.querySelector("ytd-topbar-logo-renderer");
     if (target && target.shadowRoot) {
       observer.observe(target.shadowRoot, { childList: true, subtree: true });
+      const ytIcon = target.shadowRoot.querySelector("yt-icon") || target.shadowRoot.querySelector("#logo-icon");
+      if (ytIcon && ytIcon.shadowRoot) {
+        observer.observe(ytIcon.shadowRoot, { childList: true, subtree: true });
+      }
       replaceLogo();
     } else {
       setTimeout(setupObserver, 100);

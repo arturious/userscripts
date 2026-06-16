@@ -20,7 +20,28 @@ function replaceLogo() {
   const logoLink = host.shadowRoot.querySelector('a#logo');
   if (!logoLink) return;
 
-  const svg = logoLink.querySelector('svg');
+  // Поиск SVG с учетом вложенных Shadow DOM (yt-icon, yt-icon-shape)
+  let svg: SVGElement | null = null;
+  
+  // Вариант А: SVG находится непосредственно в ссылке
+  svg = logoLink.querySelector('svg');
+  
+  // Вариант Б: SVG внутри shadowRoot элемента yt-icon
+  if (!svg) {
+    const ytIcon = logoLink.querySelector('yt-icon') || logoLink.querySelector('#logo-icon');
+    if (ytIcon && ytIcon.shadowRoot) {
+      svg = ytIcon.shadowRoot.querySelector('svg');
+    }
+  }
+
+  // Вариант В: SVG внутри shadowRoot элемента yt-icon-shape
+  if (!svg) {
+    const iconShape = logoLink.querySelector('yt-icon-shape');
+    if (iconShape && iconShape.shadowRoot) {
+      svg = iconShape.shadowRoot.querySelector('svg');
+    }
+  }
+
   if (!svg) return;
 
   // 2. Обрезаем SVG через viewBox, чтобы оставить только красную иконку (плей)
@@ -34,9 +55,15 @@ function replaceLogo() {
     svg.style.width = `${width}px`;
     svg.style.height = `${height}px`;
     svg.dataset.cropped = 'true';
+
+    // Уменьшаем также ширину родительского контейнера yt-icon, чтобы убрать пустоту
+    const parentIcon = svg.closest('yt-icon') || svg.closest('#logo-icon') || svg.parentElement;
+    if (parentIcon) {
+      parentIcon.style.width = `${width}px`;
+    }
   }
 
-  // 3. Внедряем стили непосредственно внутрь shadow root компонента
+  // 3. Внедряем стили непосредственно внутрь shadow root компонента ytd-topbar-logo-renderer
   if (!host.shadowRoot.getElementById('custom-premium-styles')) {
     const shadowStyle = document.createElement('style');
     shadowStyle.id = 'custom-premium-styles';
@@ -85,6 +112,13 @@ const setupObserver = () => {
   const target = document.querySelector('ytd-topbar-logo-renderer');
   if (target && target.shadowRoot) {
     observer.observe(target.shadowRoot, { childList: true, subtree: true });
+    
+    // Также наблюдаем за внутренними изменениями в yt-icon, если он есть
+    const ytIcon = target.shadowRoot.querySelector('yt-icon') || target.shadowRoot.querySelector('#logo-icon');
+    if (ytIcon && ytIcon.shadowRoot) {
+      observer.observe(ytIcon.shadowRoot, { childList: true, subtree: true });
+    }
+    
     replaceLogo();
   } else {
     // Ждем появления шапки в DOM
