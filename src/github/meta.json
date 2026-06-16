@@ -1,0 +1,16 @@
+{
+  "name": "GitHub Pitch Black",
+  "namespace": "my-userscripts",
+  "version": "1.0.0",
+  "description": "Applies a pitch black theme to GitHub",
+  "author": "Artur Bakhtygereyev",
+  "match": [
+    "https://github.com/*",
+    "https://*.github.com/*"
+  ],
+  "run-at": "document-start",
+  "inject-into": "content",
+  "grant": [
+    "GM_addStyle"
+  ]
+}
