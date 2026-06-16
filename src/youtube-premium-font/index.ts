@@ -18,8 +18,7 @@ const STYLES_CONTENT = `
   /* 2. Ссылочный контейнер логотипа */
   ytd-topbar-logo-renderer a#logo,
   ytd-logo a#logo,
-  a#logo,
-  #logo {
+  a#logo {
     display: flex !important;
     align-items: center !important;
     gap: 2px !important;
@@ -29,8 +28,7 @@ const STYLES_CONTENT = `
   /* 3. Отрисовываем иконку YouTube через ::before */
   ytd-topbar-logo-renderer a#logo::before,
   ytd-logo a#logo::before,
-  a#logo::before,
-  #logo::before {
+  a#logo::before {
     content: "" !important;
     width: 30px !important;
     height: 25px !important;
@@ -46,8 +44,7 @@ const STYLES_CONTENT = `
   /* 4. Отрисовываем текст premium через ::after */
   ytd-topbar-logo-renderer a#logo::after,
   ytd-logo a#logo::after,
-  a#logo::after,
-  #logo::after {
+  a#logo::after {
     content: "premium" !important;
     color: var(--yt-spec-text-primary, #ffffff) !important;
     font-family: ${FONT_FAMILY};
@@ -82,17 +79,19 @@ if (!document.getElementById('yt-premium-font-global')) {
 }
 
 function replaceLogo() {
-  const host = document.querySelector('ytd-topbar-logo-renderer') || document.querySelector('ytd-logo');
-  if (!host || !host.shadowRoot) return;
+  const hosts = document.querySelectorAll('ytd-topbar-logo-renderer, ytd-logo');
+  hosts.forEach(host => {
+    if (!host || !host.shadowRoot) return;
 
-  // Внедряем стили непосредственно внутрь shadow root хоста логотипа
-  if (!host.shadowRoot.getElementById('custom-premium-styles')) {
-    const shadowStyle = document.createElement('style');
-    shadowStyle.id = 'custom-premium-styles';
-    shadowStyle.textContent = STYLES_CONTENT;
-    host.shadowRoot.appendChild(shadowStyle);
-    console.log('[Userscript] Стили кастомного логотипа успешно внедрены в shadowRoot.');
-  }
+    // Внедряем стили непосредственно внутрь shadow root хоста логотипа
+    if (!host.shadowRoot.getElementById('custom-premium-styles')) {
+      const shadowStyle = document.createElement('style');
+      shadowStyle.id = 'custom-premium-styles';
+      shadowStyle.textContent = STYLES_CONTENT;
+      host.shadowRoot.appendChild(shadowStyle);
+      console.log(`[Userscript] Стили кастомного логотипа успешно внедрены в shadowRoot элемента ${host.tagName}.`);
+    }
+  });
 }
 
 // Глобальный MutationObserver для отслеживания инициализации элементов в DOM и SPF-навигации
