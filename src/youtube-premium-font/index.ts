@@ -12,8 +12,8 @@ if (!document.getElementById('yt-premium-font-global')) {
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
   `;
-  document.head.appendChild(globalStyle);
-  console.log('[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.');
+  (document.head || document.documentElement).appendChild(globalStyle);
+  console.log('[Userscript] Глобальный шрифт Japan Daisuke внедрен.');
 }
 
 // Храним уже наблюдаемые shadowRoot, чтобы не вешать слушатели повторно

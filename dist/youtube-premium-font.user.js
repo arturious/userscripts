@@ -25,8 +25,8 @@
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
   `;
-    document.head.appendChild(globalStyle);
-    console.log("[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.");
+    (document.head || document.documentElement).appendChild(globalStyle);
+    console.log("[Userscript] Глобальный шрифт Japan Daisuke внедрен.");
   }
   const observedRoots = /* @__PURE__ */ new Set();
   function observeShadow(root) {
