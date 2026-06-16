@@ -1,50 +1,61 @@
 const CUSTOM_FONT = "'Japan Daisuke', 'Japan Daisuke Font', sans-serif";
 
-// Внедряем стили
-const style = document.createElement('style');
-style.textContent = `
-  @font-face {
-    font-family: 'Japan Daisuke';
-    src: local('Japan Daisuke'), local('Japan Daisuke Font');
-  }
-
-  .custom-premium-container {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    user-select: none;
-  }
-
-  .custom-premium-container svg {
-    height: 20px;
-    color: var(--yt-spec-text-primary, #ffffff);
-    fill: currentColor;
-  }
-
-  .custom-premium-text {
-    font-family: ${CUSTOM_FONT};
-    font-size: 14px;
-    font-weight: 500;
-    margin-left: 6px;
-    color: var(--yt-spec-text-primary, #ffffff);
-    letter-spacing: 0.5px;
-    text-transform: capitalize;
-  }
-
-  /* Скрываем стандартный значок страны или другие бейджи рядом с логотипом */
-  ytd-topbar-logo-renderer #logo #country-code,
-  ytd-topbar-logo-renderer #logo ytd-badge-supported-renderer {
-    display: none !important;
-  }
-`;
-document.head.appendChild(style);
+// 1. Внедряем глобальный шрифт в head документа (так как из shadow root локальные шрифты не всегда корректно резолвятся)
+if (!document.getElementById('yt-premium-font-global')) {
+  const globalStyle = document.createElement('style');
+  globalStyle.id = 'yt-premium-font-global';
+  globalStyle.textContent = `
+    @font-face {
+      font-family: 'Japan Daisuke';
+      src: local('Japan Daisuke'), local('Japan Daisuke Font');
+    }
+  `;
+  document.head.appendChild(globalStyle);
+}
 
 function replaceLogo() {
-  const logoLink = document.querySelector('ytd-topbar-logo-renderer a#logo');
-  if (!logoLink) return;
+  const host = document.querySelector('ytd-topbar-logo-renderer');
+  if (!host || !host.shadowRoot) return;
 
   // Если уже заменили, пропускаем
-  if (logoLink.querySelector('.custom-premium-container')) return;
+  if (host.shadowRoot.querySelector('.custom-premium-container')) return;
+
+  const logoLink = host.shadowRoot.querySelector('a#logo');
+  if (!logoLink) return;
+
+  // 2. Внедряем стили непосредственно внутрь shadow root компонента
+  const shadowStyle = document.createElement('style');
+  shadowStyle.textContent = `
+    .custom-premium-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      user-select: none;
+    }
+
+    .custom-premium-container svg {
+      height: 20px;
+      color: var(--yt-spec-text-primary, #ffffff);
+      fill: currentColor;
+    }
+
+    .custom-premium-text {
+      font-family: ${CUSTOM_FONT};
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 6px;
+      color: var(--yt-spec-text-primary, #ffffff);
+      letter-spacing: 0.5px;
+      text-transform: capitalize;
+    }
+
+    /* Скрываем стандартные элементы внутри shadow root (код страны и другие плашки) */
+    #country-code,
+    ytd-badge-supported-renderer {
+      display: none !important;
+    }
+  `;
+  host.shadowRoot.appendChild(shadowStyle);
 
   // Заменяем содержимое логотипа на наш кастомный вариант
   logoLink.innerHTML = `
@@ -73,11 +84,11 @@ const observer = new MutationObserver((mutations) => {
   replaceLogo();
 });
 
-// Наблюдаем за изменениями в шапке
+// Наблюдаем за изменениями внутри shadowRoot шапки
 const setupObserver = () => {
   const target = document.querySelector('ytd-topbar-logo-renderer');
-  if (target) {
-    observer.observe(target, { childList: true, subtree: true });
+  if (target && target.shadowRoot) {
+    observer.observe(target.shadowRoot, { childList: true, subtree: true });
     replaceLogo();
   } else {
     // Ждем появления шапки в DOM

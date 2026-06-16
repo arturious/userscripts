@@ -13,47 +13,55 @@
   'use strict';
 
   const CUSTOM_FONT = "'Japan Daisuke', 'Japan Daisuke Font', sans-serif";
-  const style = document.createElement("style");
-  style.textContent = `
-  @font-face {
-    font-family: 'Japan Daisuke';
-    src: local('Japan Daisuke'), local('Japan Daisuke Font');
+  if (!document.getElementById("yt-premium-font-global")) {
+    const globalStyle = document.createElement("style");
+    globalStyle.id = "yt-premium-font-global";
+    globalStyle.textContent = `
+    @font-face {
+      font-family: 'Japan Daisuke';
+      src: local('Japan Daisuke'), local('Japan Daisuke Font');
+    }
+  `;
+    document.head.appendChild(globalStyle);
   }
-
-  .custom-premium-container {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    user-select: none;
-  }
-
-  .custom-premium-container svg {
-    height: 20px;
-    color: var(--yt-spec-text-primary, #ffffff);
-    fill: currentColor;
-  }
-
-  .custom-premium-text {
-    font-family: ${CUSTOM_FONT};
-    font-size: 14px;
-    font-weight: 500;
-    margin-left: 6px;
-    color: var(--yt-spec-text-primary, #ffffff);
-    letter-spacing: 0.5px;
-    text-transform: capitalize;
-  }
-
-  /* Скрываем стандартный значок страны или другие бейджи рядом с логотипом */
-  ytd-topbar-logo-renderer #logo #country-code,
-  ytd-topbar-logo-renderer #logo ytd-badge-supported-renderer {
-    display: none !important;
-  }
-`;
-  document.head.appendChild(style);
   function replaceLogo() {
-    const logoLink = document.querySelector("ytd-topbar-logo-renderer a#logo");
+    const host = document.querySelector("ytd-topbar-logo-renderer");
+    if (!host || !host.shadowRoot) return;
+    if (host.shadowRoot.querySelector(".custom-premium-container")) return;
+    const logoLink = host.shadowRoot.querySelector("a#logo");
     if (!logoLink) return;
-    if (logoLink.querySelector(".custom-premium-container")) return;
+    const shadowStyle = document.createElement("style");
+    shadowStyle.textContent = `
+    .custom-premium-container {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      user-select: none;
+    }
+
+    .custom-premium-container svg {
+      height: 20px;
+      color: var(--yt-spec-text-primary, #ffffff);
+      fill: currentColor;
+    }
+
+    .custom-premium-text {
+      font-family: ${CUSTOM_FONT};
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 6px;
+      color: var(--yt-spec-text-primary, #ffffff);
+      letter-spacing: 0.5px;
+      text-transform: capitalize;
+    }
+
+    /* Скрываем стандартные элементы внутри shadow root (код страны и другие плашки) */
+    #country-code,
+    ytd-badge-supported-renderer {
+      display: none !important;
+    }
+  `;
+    host.shadowRoot.appendChild(shadowStyle);
     logoLink.innerHTML = `
     <div class="custom-premium-container">
       <svg viewBox="0 0 90 20" style="width: 80px; height: 20px;">
@@ -79,8 +87,8 @@
   });
   const setupObserver = () => {
     const target = document.querySelector("ytd-topbar-logo-renderer");
-    if (target) {
-      observer.observe(target, { childList: true, subtree: true });
+    if (target && target.shadowRoot) {
+      observer.observe(target.shadowRoot, { childList: true, subtree: true });
       replaceLogo();
     } else {
       setTimeout(setupObserver, 100);
