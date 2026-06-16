@@ -2,7 +2,7 @@ const FONT_FAMILY = '"Japan Daisuke", "JapanDaisuki", "Japan Daisuke Regular", s
 
 console.log('%c[Userscript] YouTube Premium Custom Font: Инициализация...', 'color: #3b82f6; font-weight: bold;');
 
-// 1. Внедряем глобальный шрифт в head документа
+// 1. Внедряем глобальный шрифт и базовые стили скрытия в head документа
 if (!document.getElementById('yt-premium-font-global')) {
   const globalStyle = document.createElement('style');
   globalStyle.id = 'yt-premium-font-global';
@@ -11,9 +11,16 @@ if (!document.getElementById('yt-premium-font-global')) {
       font-family: 'Japan Daisuke';
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
+
+    /* Принудительное скрытие логотипа на глобальном уровне */
+    yt-icon#logo-icon,
+    #logo-icon.ytd-logo,
+    ytd-topbar-logo-renderer #logo-icon {
+      display: none !important;
+    }
   `;
   (document.head || document.documentElement).appendChild(globalStyle);
-  console.log('[Userscript] Глобальный шрифт Japan Daisuke внедрен.');
+  console.log('[Userscript] Глобальный шрифт и стили скрытия внедрены.');
 }
 
 function replaceLogo() {
@@ -26,8 +33,8 @@ function replaceLogo() {
     const shadowStyle = document.createElement('style');
     shadowStyle.id = 'custom-premium-styles';
     shadowStyle.textContent = `
-      /* Скрываем оригинальный контейнер иконки и SVG */
-      #logo-icon {
+      /* Скрываем оригинальный контейнер иконки и SVG внутри shadowRoot */
+      #logo-icon, yt-icon#logo-icon, #logo-icon.ytd-logo {
         display: none !important;
       }
 

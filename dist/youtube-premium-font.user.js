@@ -24,9 +24,16 @@
       font-family: 'Japan Daisuke';
       src: local('Japan Daisuke'), local('JapanDaisuki'), local('Japan Daisuke Regular');
     }
+
+    /* Принудительное скрытие логотипа на глобальном уровне */
+    yt-icon#logo-icon,
+    #logo-icon.ytd-logo,
+    ytd-topbar-logo-renderer #logo-icon {
+      display: none !important;
+    }
   `;
     (document.head || document.documentElement).appendChild(globalStyle);
-    console.log("[Userscript] Глобальный шрифт Japan Daisuke внедрен.");
+    console.log("[Userscript] Глобальный шрифт и стили скрытия внедрены.");
   }
   function replaceLogo() {
     const host = document.querySelector("ytd-topbar-logo-renderer") || document.querySelector("ytd-logo");
@@ -35,8 +42,8 @@
       const shadowStyle = document.createElement("style");
       shadowStyle.id = "custom-premium-styles";
       shadowStyle.textContent = `
-      /* Скрываем оригинальный контейнер иконки и SVG */
-      #logo-icon {
+      /* Скрываем оригинальный контейнер иконки и SVG внутри shadowRoot */
+      #logo-icon, yt-icon#logo-icon, #logo-icon.ytd-logo {
         display: none !important;
       }
 
