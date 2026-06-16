@@ -14,6 +14,7 @@
   'use strict';
 
   const FONT_FAMILY = '"Japan Daisuke", "JapanDaisuki", "Japan Daisuke Regular", serif !important';
+  console.log("%c[Userscript] YouTube Premium Custom Font: Инициализация...", "color: #3b82f6; font-weight: bold;");
   if (!document.getElementById("yt-premium-font-global")) {
     const globalStyle = document.createElement("style");
     globalStyle.id = "yt-premium-font-global";
@@ -24,19 +25,28 @@
     }
   `;
     document.head.appendChild(globalStyle);
+    console.log("[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.");
   }
   const observedRoots = /* @__PURE__ */ new Set();
   function observeShadow(root) {
     if (observedRoots.has(root)) return;
     observedRoots.add(root);
     observer.observe(root, { childList: true, subtree: true });
+    console.log("[Userscript] Добавлен MutationObserver на shadowRoot:", root.host.tagName);
   }
   function replaceLogo() {
     const host = document.querySelector("ytd-topbar-logo-renderer") || document.querySelector("ytd-logo");
-    if (!host || !host.shadowRoot) return;
+    if (!host) {
+      return;
+    }
+    if (!host.shadowRoot) {
+      return;
+    }
     observeShadow(host.shadowRoot);
     const logoLink = host.shadowRoot.querySelector("a#logo") || host.shadowRoot.querySelector("a");
-    if (!logoLink) return;
+    if (!logoLink) {
+      return;
+    }
     let svg = null;
     svg = logoLink.querySelector("svg");
     const ytIcon = logoLink.querySelector("yt-icon") || logoLink.querySelector("#logo-icon");
@@ -63,6 +73,7 @@
         }
       `;
         ytIcon.shadowRoot.appendChild(forceStyle);
+        console.log("[Userscript] Внедрено скрытие путей в shadowRoot yt-icon.");
       }
     }
     if (iconShape && iconShape.shadowRoot) {
@@ -77,6 +88,7 @@
         }
       `;
         iconShape.shadowRoot.appendChild(forceStyle);
+        console.log("[Userscript] Внедрено скрытие путей в shadowRoot yt-icon-shape.");
       }
     }
     if (!host.shadowRoot.getElementById("custom-premium-styles")) {
@@ -105,6 +117,7 @@
       }
     `;
       host.shadowRoot.appendChild(shadowStyle);
+      console.log("[Userscript] Стили ::after успешно внедрены в shadowRoot логотипа.");
     }
     if (!svg) return;
     const originalViewBox = svg.getAttribute("viewBox");
@@ -120,12 +133,14 @@
       if (parentIcon) {
         parentIcon.style.width = `${width}px`;
       }
+      console.log("[Userscript] SVG логотипа успешно обрезано до иконки плей.");
     }
   }
   const observer = new MutationObserver(() => {
     replaceLogo();
   });
   observer.observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(replaceLogo, 500);
   replaceLogo();
 
 })();

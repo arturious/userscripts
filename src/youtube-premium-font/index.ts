@@ -1,5 +1,7 @@
 const FONT_FAMILY = '"Japan Daisuke", "JapanDaisuki", "Japan Daisuke Regular", serif !important';
 
+console.log('%c[Userscript] YouTube Premium Custom Font: Инициализация...', 'color: #3b82f6; font-weight: bold;');
+
 // 1. Внедряем глобальный шрифт в head документа
 if (!document.getElementById('yt-premium-font-global')) {
   const globalStyle = document.createElement('style');
@@ -11,6 +13,7 @@ if (!document.getElementById('yt-premium-font-global')) {
     }
   `;
   document.head.appendChild(globalStyle);
+  console.log('[Userscript] Глобальный шрифт Japan Daisuke внедрен в head.');
 }
 
 // Храним уже наблюдаемые shadowRoot, чтобы не вешать слушатели повторно
@@ -20,18 +23,27 @@ function observeShadow(root) {
   if (observedRoots.has(root)) return;
   observedRoots.add(root);
   observer.observe(root, { childList: true, subtree: true });
+  console.log('[Userscript] Добавлен MutationObserver на shadowRoot:', root.host.tagName);
 }
 
 function replaceLogo() {
   // Ищем хост-элемент логотипа (поддерживаем оба возможных варианта на YouTube)
   const host = document.querySelector('ytd-topbar-logo-renderer') || document.querySelector('ytd-logo');
-  if (!host || !host.shadowRoot) return;
+  if (!host) {
+    return;
+  }
+  
+  if (!host.shadowRoot) {
+    return;
+  }
 
   // Начинаем следить за изменениями внутри теневого домена хоста
   observeShadow(host.shadowRoot);
 
   const logoLink = host.shadowRoot.querySelector('a#logo') || host.shadowRoot.querySelector('a');
-  if (!logoLink) return;
+  if (!logoLink) {
+    return;
+  }
 
   // Поиск SVG с учетом вложенных Shadow DOM (yt-icon, yt-icon-shape)
   let svg = null;
@@ -68,6 +80,7 @@ function replaceLogo() {
         }
       `;
       ytIcon.shadowRoot.appendChild(forceStyle);
+      console.log('[Userscript] Внедрено скрытие путей в shadowRoot yt-icon.');
     }
   }
 
@@ -83,6 +96,7 @@ function replaceLogo() {
         }
       `;
       iconShape.shadowRoot.appendChild(forceStyle);
+      console.log('[Userscript] Внедрено скрытие путей в shadowRoot yt-icon-shape.');
     }
   }
 
@@ -113,6 +127,7 @@ function replaceLogo() {
       }
     `;
     host.shadowRoot.appendChild(shadowStyle);
+    console.log('[Userscript] Стили ::after успешно внедрены в shadowRoot логотипа.');
   }
 
   if (!svg) return;
@@ -134,6 +149,7 @@ function replaceLogo() {
     if (parentIcon) {
       parentIcon.style.width = `${width}px`;
     }
+    console.log('[Userscript] SVG логотипа успешно обрезано до иконки плей.');
   }
 }
 
@@ -144,6 +160,9 @@ const observer = new MutationObserver(() => {
 
 // Наблюдаем за всем деревом документов
 observer.observe(document.documentElement, { childList: true, subtree: true });
+
+// Дополнительно запускаем интервал (каждые 500мс) на случай асинхронных Polymer-апгрейдов
+setInterval(replaceLogo, 500);
 
 // Первоначальный запуск
 replaceLogo();
