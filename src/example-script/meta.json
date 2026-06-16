@@ -1,0 +1,14 @@
+{
+  "name": "Example Userscript",
+  "namespace": "my-userscripts",
+  "version": "1.0.0",
+  "description": "An example userscript using Vite and TypeScript",
+  "author": "Artur Bakhtygereyev",
+  "match": [
+    "https://example.com/*"
+  ],
+  "icon": "https://www.google.com/s2/favicons?sz=64&domain=example.com",
+  "grant": [
+    "none"
+  ]
+}
