@@ -31,16 +31,40 @@
     if (!logoLink) return;
     let svg = null;
     svg = logoLink.querySelector("svg");
-    if (!svg) {
-      const ytIcon = logoLink.querySelector("yt-icon") || logoLink.querySelector("#logo-icon");
-      if (ytIcon && ytIcon.shadowRoot) {
-        svg = ytIcon.shadowRoot.querySelector("svg");
+    const ytIcon = logoLink.querySelector("yt-icon") || logoLink.querySelector("#logo-icon");
+    if (!svg && ytIcon && ytIcon.shadowRoot) {
+      svg = ytIcon.shadowRoot.querySelector("svg");
+    }
+    const iconShape = logoLink.querySelector("yt-icon-shape");
+    if (!svg && iconShape && iconShape.shadowRoot) {
+      svg = iconShape.shadowRoot.querySelector("svg");
+    }
+    if (ytIcon && ytIcon.shadowRoot) {
+      if (!ytIcon.shadowRoot.getElementById("force-hide-youtube-paths")) {
+        const forceStyle = document.createElement("style");
+        forceStyle.id = "force-hide-youtube-paths";
+        forceStyle.textContent = `
+        [id^="youtube-paths"], g[id*="youtube-paths"] {
+          display: none !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+      `;
+        ytIcon.shadowRoot.appendChild(forceStyle);
       }
     }
-    if (!svg) {
-      const iconShape = logoLink.querySelector("yt-icon-shape");
-      if (iconShape && iconShape.shadowRoot) {
-        svg = iconShape.shadowRoot.querySelector("svg");
+    if (iconShape && iconShape.shadowRoot) {
+      if (!iconShape.shadowRoot.getElementById("force-hide-youtube-paths")) {
+        const forceStyle = document.createElement("style");
+        forceStyle.id = "force-hide-youtube-paths";
+        forceStyle.textContent = `
+        [id^="youtube-paths"], g[id*="youtube-paths"] {
+          display: none !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+      `;
+        iconShape.shadowRoot.appendChild(forceStyle);
       }
     }
     if (!svg) return;
