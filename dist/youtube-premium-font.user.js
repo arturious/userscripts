@@ -27,9 +27,9 @@
   }
 
   /* 2. Ссылочный контейнер логотипа */
-  ytd-topbar-logo-renderer a#logo,
-  ytd-logo a#logo,
-  a#logo {
+  ytd-topbar-logo-renderer > a#logo,
+  ytd-logo > a#logo,
+  :host > a#logo {
     display: flex !important;
     align-items: center !important;
     gap: 2px !important;
@@ -37,9 +37,9 @@
   }
 
   /* 3. Отрисовываем иконку YouTube через ::before */
-  ytd-topbar-logo-renderer a#logo::before,
-  ytd-logo a#logo::before,
-  a#logo::before {
+  ytd-topbar-logo-renderer > a#logo::before,
+  ytd-logo > a#logo::before,
+  :host > a#logo::before {
     content: "" !important;
     width: 30px !important;
     height: 25px !important;
@@ -53,9 +53,9 @@
   }
 
   /* 4. Отрисовываем текст premium через ::after */
-  ytd-topbar-logo-renderer a#logo::after,
-  ytd-logo a#logo::after,
-  a#logo::after {
+  ytd-topbar-logo-renderer > a#logo::after,
+  ytd-logo > a#logo::after,
+  :host > a#logo::after {
     content: "premium" !important;
     color: var(--yt-spec-text-primary, #ffffff) !important;
     font-family: ${FONT_FAMILY};
