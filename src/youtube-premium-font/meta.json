@@ -5,9 +5,10 @@
   "description": "Replaces YouTube Premium logo text with custom styled text using Japan Daisuke font",
   "author": "Artur Bakhtygereyev",
   "match": [
-    "https://www.youtube.com/*"
+    "https://www.youtube.com/*",
+    "https://youtube.com/*"
   ],
-  "run-at": "document-end",
+  "run-at": "document-start",
   "grant": [
     "none"
   ]

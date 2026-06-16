@@ -5,8 +5,9 @@
 // @author       Artur Bakhtygereyev
 // @description  Replaces YouTube Premium logo text with custom styled text using Japan Daisuke font
 // @match        https://www.youtube.com/*
+// @match        https://youtube.com/*
 // @grant        none
-// @run-at       document-end
+// @run-at       document-start
 // ==/UserScript==
 
 (function () {
