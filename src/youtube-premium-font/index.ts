@@ -79,14 +79,20 @@ if (!document.getElementById('yt-premium-font-global')) {
 
 function replaceLogo() {
   const hosts = document.querySelectorAll('ytd-topbar-logo-renderer, ytd-logo');
+  
+  // Отбираем хосты для стилизации. Если внутри ytd-topbar-logo-renderer
+  // есть вложенный ytd-logo, мы пропускаем внешний контейнер.
+  const activeHosts: Element[] = [];
   hosts.forEach(host => {
-    if (!host || !host.shadowRoot) return;
+    if (host.tagName.toLowerCase() === 'ytd-topbar-logo-renderer') {
+      const hasInnerLogo = host.querySelector('ytd-logo');
+      if (hasInnerLogo) return; // Пропускаем внешний контейнер
+    }
+    activeHosts.push(host);
+  });
 
-    // Проверяем, содержит ли shadowRoot этого хоста оригинальный логотип.
-    // Если не содержит (например, это внешний контейнер ytd-topbar-logo-renderer,
-    // внутри которого лежит ytd-logo), то не стилизуем его, чтобы избежать дублирования.
-    const hasOriginalIcon = host.shadowRoot.querySelector('#logo-icon');
-    if (!hasOriginalIcon) return;
+  activeHosts.forEach(host => {
+    if (!host || !host.shadowRoot) return;
 
     if (!host.shadowRoot.getElementById('custom-premium-styles')) {
       const shadowStyle = document.createElement('style');

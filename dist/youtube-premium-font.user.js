@@ -87,10 +87,16 @@
   }
   function replaceLogo() {
     const hosts = document.querySelectorAll("ytd-topbar-logo-renderer, ytd-logo");
+    const activeHosts = [];
     hosts.forEach((host) => {
+      if (host.tagName.toLowerCase() === "ytd-topbar-logo-renderer") {
+        const hasInnerLogo = host.querySelector("ytd-logo");
+        if (hasInnerLogo) return;
+      }
+      activeHosts.push(host);
+    });
+    activeHosts.forEach((host) => {
       if (!host || !host.shadowRoot) return;
-      const hasOriginalIcon = host.shadowRoot.querySelector("#logo-icon");
-      if (!hasOriginalIcon) return;
       if (!host.shadowRoot.getElementById("custom-premium-styles")) {
         const shadowStyle = document.createElement("style");
         shadowStyle.id = "custom-premium-styles";
