@@ -10,6 +10,6 @@
   ],
   "run-at": "document-start",
   "grant": [
-    "none"
+    "GM_addStyle"
   ]
 }

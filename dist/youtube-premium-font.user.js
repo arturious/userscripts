@@ -6,7 +6,7 @@
 // @description  Replaces YouTube Premium logo text with custom styled text using Japan Daisuke font
 // @match        https://www.youtube.com/*
 // @match        https://youtube.com/*
-// @grant        none
+// @grant        GM_addStyle
 // @run-at       document-start
 // ==/UserScript==
 
